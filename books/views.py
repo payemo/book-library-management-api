@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from rest_framework import generics
+from django_filters import rest_framework as filters
 from books.models import Book
 from books.serializers import BookSerializer
+from books.filters import BookFilter
 
 class BookListCreate(generics.ListCreateAPIView):
     """
@@ -9,7 +11,8 @@ class BookListCreate(generics.ListCreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-
+    filter_backends = [filters.DjangoFilterBackend,]
+    filterset_class = BookFilter
 
 class BookRetrieve(generics.RetrieveAPIView):
     """
