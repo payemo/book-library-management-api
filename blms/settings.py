@@ -91,7 +91,10 @@ DATABASES = {
         'USER': "monc",
         'PASSWORD': "",
         'HOST': "localhost",
-        'PORT': "5432"
+        'PORT': "5432",
+        'TEST': {
+            'NAME': 'test_book_library'
+        }
     }
 }
 

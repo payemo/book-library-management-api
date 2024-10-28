@@ -5,7 +5,7 @@ from books.models import Book
 from books.serializers import BookSerializer
 from books.filters import BookFilter
 
-class BookListCreate(generics.ListCreateAPIView):
+class BookList(generics.ListAPIView):
     """
     API endpoint that allows both creation and listing books.
     """
@@ -13,6 +13,13 @@ class BookListCreate(generics.ListCreateAPIView):
     serializer_class = BookSerializer
     filter_backends = [filters.DjangoFilterBackend,]
     filterset_class = BookFilter
+
+class BookCreate(generics.CreateAPIView):
+    """
+    API endpoint that allows both creation and listing books.
+    """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
 
 class BookRetrieve(generics.RetrieveAPIView):
     """
