@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 read -p "Enter the database name: " DB_NAME
 read -p "Enter the database user:" DB_USER
