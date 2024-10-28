@@ -1,7 +1,7 @@
 #!/bin/bash
 
 read -p "Enter the database name: " DB_NAME
-read -p "Enter the database user:" DB_USER
+read -p "Enter the database user: " DB_USER
 echo "Enter the password for '$DB_USER': "
 read -s DB_PASSWORD
 read -p "Enter the database host (default is 127.0.0.1): " DB_HOST
@@ -70,7 +70,7 @@ fi
 
 # Apply migrations
 echo "Applying database migrations ..."
-python manager.py migrate
+python manage.py migrate
 if [ $? -ne 0 ]; then
     echo "Failed to apply migrations. Exiting."
     deactivate
@@ -79,14 +79,14 @@ fi
 
 # Run tests
 echo "Running tests ..."
-python manager.py test
+python manage.py test
 if [ $? -ne 0 ]; then
     deactivate
     exit 1
 fi
 
 # Start the server
-python manager.py runserver
+python manage.py runserver
 
 # Deactivate the virtual env when server stops
 deactivate
