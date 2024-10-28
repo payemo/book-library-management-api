@@ -33,7 +33,8 @@ class Book(models.Model):
         return f"{self.title}:{self.isbn}"
     
     class Meta:
-        unique_together = ["title", "author"],
+        db_table = 'books'
+        unique_together = ["title", "author"]
         constraints: [
             models.CheckConstraint(
                 check=models.Q(isbn__regex=r'^.{13}$'),
