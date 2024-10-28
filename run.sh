@@ -1,5 +1,14 @@
 #!bin/bash
 
+read -p "Enter the database name: " DB_NAME
+read -p "Enter the database user:" DB_USER
+echo "Enter the password for '$DB_USER': "
+read -s DB_PASSWORD
+read -p "Enter the database host (default is 127.0.0.1): " DB_HOST
+DB_HOST=${DB_HOST:-127.0.0.1} # Default to 127.0.0.1 if left blank
+read -p "Enter the database port (default is 5432): " DB_PORT
+DB_PORT=${DB_PORT:-5432}
+
 VENV_DIR=".venv"
 
 if ! command -v python3 &>/dev/null; then
@@ -12,6 +21,30 @@ if ! command -v pip3 &>/dev/null; then
     echo "pip3 is not installed. Installing pip3 ..."
     sudo apt update && sudo apt install -y python3-pip
 fi
+
+# Check if PostgreSQL is installed
+if ! command -v psql &>/dev/null; then
+    echo "PostgreSQL is not installed. Please install and try again."
+    exit 1
+fi
+
+# Create PostgreSQL database and user
+echo "Setting up PostgreSQL and user ..."
+sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
+sudo -u postgres psql -c "CREATE ROLE $DB_USER WITH SUPERUSER LOGIN PASSWORD '$DB_PASSWORD';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
+
+echo "Creating .env file for storing database secrets ..."
+cd blms
+cat <<EOF > .env
+DATABASE_NAME=$DB_NAME
+DATABASE_USER=$DB_USER
+DATABASE_PASSWORD=$DB_PASSWORD
+DATABASE_HOST=$DB_HOST
+DATABASE_PORT=$DB_PORT
+EOF
+
+cd ..
 
 # Create virtual environment if it does not exist.
 if [ ! -d "$VENV_DIR" ]; then
@@ -39,7 +72,7 @@ fi
 echo "Applying database migrations ..."
 python manager.py migrate
 if [ $? -ne 0 ]; then
-    echo "Failed to apply migrations. Exiting"
+    echo "Failed to apply migrations. Exiting."
     deactivate
     exit 1
 fi
